@@ -1,0 +1,179 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": [],
+      "metadata": {
+        "id": "TlUTFkrydb6X"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "import nltk\n",
+        "from nltk.sentiment.vader import SentimentIntensityAnalyzer\n"
+      ],
+      "metadata": {
+        "id": "BA0VnAaOGfba"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "nltk.download('vader_lexicon')\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "IpCm8Pr7G1Vr",
+        "outputId": "d13f4b38-5cb3-4232-9d6a-e53694383cf9",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package vader_lexicon to /root/nltk_data...\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data = pd.read_csv('/content/archive.zip')"
+      ],
+      "metadata": {
+        "id": "JXgc-59ZHBNB"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "sid = SentimentIntensityAnalyzer()\n"
+      ],
+      "metadata": {
+        "id": "76M0Fc2HJLdc"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "def get_sentiment_score(text):\n",
+        "    scores = sid.polarity_scores(text)\n",
+        "    return scores['compound']\n"
+      ],
+      "metadata": {
+        "id": "QBJo5mi9JgDU"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data['sentiment_score'] = data['review'].apply(get_sentiment_score)\n"
+      ],
+      "metadata": {
+        "id": "3-SALd3PJlU7"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "def categorize_sentiment(score):\n",
+        "    if score >= 0.05:\n",
+        "        return 'Positive'\n",
+        "    elif score <= -0.05:\n",
+        "        return 'Negative'\n",
+        "    else:\n",
+        "        return 'Neutral'\n"
+      ],
+      "metadata": {
+        "id": "YGPOwhrkNUhy"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data['sentiment_category'] = data['sentiment_score'].apply(categorize_sentiment)\n"
+      ],
+      "metadata": {
+        "id": "RB_4olDxNZPj"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(data[['review', 'sentiment_score', 'sentiment_category']].head())"
+      ],
+      "metadata": {
+        "id": "fQ184EHfNdVE",
+        "outputId": "896b78e0-271f-49d9-d1aa-258d6dcc5b2c",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "                                              review  sentiment_score  \\\n",
+            "0  One of the other reviewers has mentioned that ...          -0.9951   \n",
+            "1  A wonderful little production. <br /><br />The...           0.9641   \n",
+            "2  I thought this was a wonderful way to spend ti...           0.9605   \n",
+            "3  Basically there's a family where a little boy ...          -0.9213   \n",
+            "4  Petter Mattei's \"Love in the Time of Money\" is...           0.9744   \n",
+            "\n",
+            "  sentiment_category  \n",
+            "0           Negative  \n",
+            "1           Positive  \n",
+            "2           Positive  \n",
+            "3           Negative  \n",
+            "4           Positive  \n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
